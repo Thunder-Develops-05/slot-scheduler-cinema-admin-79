@@ -5,4 +5,8 @@ export interface Theater {
   location: string;
   capacity: number;
   screens: number;
+  description?: string;
+  imageUrl?: string;
+  amenities?: string[];
+  isActive?: boolean;
 }

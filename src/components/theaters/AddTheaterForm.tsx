@@ -36,8 +36,8 @@ const AddTheaterForm = ({ onSubmit, initialData, onCancel }: AddTheaterFormProps
     defaultValues: initialData || {
       name: '',
       location: '',
-      capacity: '',
-      screens: '',
+      capacity: 0, // Changed from string to number
+      screens: 0, // Changed from string to number
     },
   });
 

@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, ArrowLeft } from 'lucide-react';
+import { PlusCircle, ArrowLeft, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { TimeSlot } from '@/types/timeSlot';
@@ -11,13 +11,13 @@ import TimeSlotCard from '@/components/time-slots/TimeSlotCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { groupSlotsByDay } from '@/utils/timeSlotUtils';
 import EditTimeSlotDialog from '@/components/time-slots/EditTimeSlotDialog';
+import { toast } from '@/components/ui/use-toast';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import TimeSlotForm from '@/components/time-slots/TimeSlotForm';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,15 +28,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import TimeSlotForm from '@/components/time-slots/TimeSlotForm';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const TimeSlots = () => {
   const { theaterId } = useParams<{ theaterId: string }>();
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const { 
     getTheaterById, 
     getTimeSlotsByTheaterId, 
     addTimeSlots, 
     updateTimeSlot, 
-    deleteTimeSlot 
+    deleteTimeSlot,
+    theaters
   } = useAppContext();
   
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -45,8 +50,31 @@ const TimeSlots = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [slotToDelete, setSlotToDelete] = useState<string | null>(null);
   
+  // Redirect to theaters page if no theater ID or invalid ID
+  useEffect(() => {
+    if (!theaterId) {
+      toast({
+        title: "Error",
+        description: "No theater selected. Please choose a theater.",
+        variant: "destructive",
+      });
+      navigate('/theaters');
+      return;
+    }
+
+    const theater = getTheaterById(theaterId);
+    if (!theater) {
+      toast({
+        title: "Error",
+        description: "Invalid theater ID. Please select a valid theater.",
+        variant: "destructive",
+      });
+      navigate('/theaters');
+    }
+  }, [theaterId, getTheaterById, navigate]);
+  
   if (!theaterId) {
-    return <div>Invalid theater ID</div>;
+    return null; // Will redirect in useEffect
   }
   
   const theater = getTheaterById(theaterId);
@@ -61,6 +89,10 @@ const TimeSlots = () => {
   const handleAddTimeSlots = (newSlots: TimeSlot[]) => {
     addTimeSlots(newSlots);
     setIsAddDialogOpen(false);
+    toast({
+      title: "Success",
+      description: `${newSlots.length} time slots added successfully.`,
+    });
   };
   
   const handleEditSlot = (slot: TimeSlot) => {
@@ -84,43 +116,39 @@ const TimeSlots = () => {
       deleteTimeSlot(slotToDelete);
       setIsDeleteDialogOpen(false);
       setSlotToDelete(null);
+      toast({
+        title: "Success",
+        description: "Time slot deleted successfully.",
+      });
     }
   };
   
   if (!theater) {
-    return (
-      <Layout>
-        <div className="flex flex-col space-y-6">
-          <h1 className="text-3xl font-bold tracking-tight">Theater not found</h1>
-          <Button asChild>
-            <Link to="/theaters">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Theaters
-            </Link>
-          </Button>
-        </div>
-      </Layout>
-    );
+    return null; // Will redirect in useEffect
   }
   
   return (
     <Layout>
       <div className="flex flex-col space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
           <div>
             <Link 
               to="/theaters" 
-              className="flex items-center text-sm text-muted-foreground hover:text-foreground mb-2"
+              className="flex items-center text-sm text-muted-foreground hover:text-foreground mb-2 transition-colors"
             >
               <ArrowLeft className="mr-1 h-4 w-4" />
               Back to Theaters
             </Link>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {theater.name} - Time Slots
-            </h1>
-            <p className="text-muted-foreground">{theater.location}</p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+                {theater.name}
+              </h1>
+              <span className="text-muted-foreground">Time Slots</span>
+            </div>
+            <p className="text-muted-foreground">{theater.location} • {theater.screens} Screens • {theater.capacity} Seats</p>
           </div>
-          <Button onClick={() => setIsAddDialogOpen(true)}>
+          
+          <Button onClick={() => setIsAddDialogOpen(true)} className="w-full lg:w-auto">
             <PlusCircle className="mr-2 h-4 w-4" />
             Add Time Slots
           </Button>
@@ -128,29 +156,42 @@ const TimeSlots = () => {
 
         {slots.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-8 bg-muted/30 rounded-lg border border-dashed">
+            <Info className="h-10 w-10 text-muted-foreground mb-3" />
             <h3 className="text-lg font-medium mb-2">No time slots yet</h3>
-            <p className="text-muted-foreground mb-4">Add time slots for this theater.</p>
+            <p className="text-muted-foreground mb-4 text-center">Time slots help you manage movie schedules and ticket pricing.</p>
             <Button onClick={() => setIsAddDialogOpen(true)}>
               Add Time Slots
             </Button>
           </div>
         ) : (
           <Tabs defaultValue="all" className="w-full">
-            <TabsList className="mb-4">
-              <TabsTrigger value="all">All Days</TabsTrigger>
-              <TabsTrigger value="weekdays">Weekdays</TabsTrigger>
-              <TabsTrigger value="weekend">Weekend</TabsTrigger>
-            </TabsList>
+            <div className="overflow-x-auto">
+              <TabsList className="mb-4 flex flex-nowrap min-w-max">
+                <TabsTrigger value="all">All Days</TabsTrigger>
+                <TabsTrigger value="weekdays">Weekdays</TabsTrigger>
+                <TabsTrigger value="weekend">Weekend</TabsTrigger>
+                {dayNames.map((day) => (
+                  <TabsTrigger key={day} value={day} className="hidden md:flex capitalize">
+                    {day.substring(0, 3)}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
             
-            <TabsContent value="all">
+            <TabsContent value="all" className="space-y-8">
               {dayNames.map((day) => {
                 const daySlots = groupedSlots[day] || [];
                 if (daySlots.length === 0) return null;
                 
                 return (
                   <div key={day} className="mb-8">
-                    <h3 className="text-lg font-medium capitalize mb-4">{day}</h3>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <h3 className="text-lg font-medium capitalize mb-4 px-1">
+                      {day}
+                      <span className="text-muted-foreground ml-2 text-sm font-normal">
+                        ({daySlots.length} slots)
+                      </span>
+                    </h3>
+                    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                       {daySlots.map((slot) => (
                         <TimeSlotCard
                           key={slot.id}
@@ -165,15 +206,20 @@ const TimeSlots = () => {
               })}
             </TabsContent>
             
-            <TabsContent value="weekdays">
+            <TabsContent value="weekdays" className="space-y-8">
               {['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].map((day) => {
                 const daySlots = groupedSlots[day] || [];
                 if (daySlots.length === 0) return null;
                 
                 return (
                   <div key={day} className="mb-8">
-                    <h3 className="text-lg font-medium capitalize mb-4">{day}</h3>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <h3 className="text-lg font-medium capitalize mb-4 px-1">
+                      {day}
+                      <span className="text-muted-foreground ml-2 text-sm font-normal">
+                        ({daySlots.length} slots)
+                      </span>
+                    </h3>
+                    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                       {daySlots.map((slot) => (
                         <TimeSlotCard
                           key={slot.id}
@@ -188,15 +234,20 @@ const TimeSlots = () => {
               })}
             </TabsContent>
             
-            <TabsContent value="weekend">
+            <TabsContent value="weekend" className="space-y-8">
               {['saturday', 'sunday'].map((day) => {
                 const daySlots = groupedSlots[day] || [];
                 if (daySlots.length === 0) return null;
                 
                 return (
                   <div key={day} className="mb-8">
-                    <h3 className="text-lg font-medium capitalize mb-4">{day}</h3>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <h3 className="text-lg font-medium capitalize mb-4 px-1">
+                      {day}
+                      <span className="text-muted-foreground ml-2 text-sm font-normal">
+                        ({daySlots.length} slots)
+                      </span>
+                    </h3>
+                    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                       {daySlots.map((slot) => (
                         <TimeSlotCard
                           key={slot.id}
@@ -210,15 +261,46 @@ const TimeSlots = () => {
                 );
               })}
             </TabsContent>
+            
+            {dayNames.map((day) => (
+              <TabsContent key={day} value={day} className="space-y-8">
+                {(() => {
+                  const daySlots = groupedSlots[day] || [];
+                  if (daySlots.length === 0) {
+                    return (
+                      <div className="flex flex-col items-center justify-center py-8">
+                        <p className="text-muted-foreground mb-4">No time slots for {day}.</p>
+                        <Button onClick={() => setIsAddDialogOpen(true)}>
+                          Add Time Slots
+                        </Button>
+                      </div>
+                    );
+                  }
+                  
+                  return (
+                    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                      {daySlots.map((slot) => (
+                        <TimeSlotCard
+                          key={slot.id}
+                          slot={slot}
+                          onDelete={handleDeleteClick}
+                          onEdit={handleEditSlot}
+                        />
+                      ))}
+                    </div>
+                  );
+                })()}
+              </TabsContent>
+            ))}
           </Tabs>
         )}
       </div>
       
       {/* Add Time Slots Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-[650px]">
+        <DialogContent className="max-w-[650px] h-[90vh] md:h-auto overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add Time Slots</DialogTitle>
+            <DialogTitle>Add Time Slots for {theater.name}</DialogTitle>
           </DialogHeader>
           <TimeSlotForm
             theaterId={theaterId}

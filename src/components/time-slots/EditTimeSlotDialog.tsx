@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -21,11 +21,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { TimeSlot } from '@/types/timeSlot';
+import { Clock, DollarSign, Calendar } from 'lucide-react';
 
 const formSchema = z.object({
-  startTime: z.string(),
-  endTime: z.string(),
-  price: z.number().min(0).or(z.string().regex(/^\d+(\.\d+)?$/).transform(Number)),
+  startTime: z.string().min(1, "Start time is required"),
+  endTime: z.string().min(1, "End time is required"),
+  price: z.number().min(0, "Price cannot be negative").or(z.string().regex(/^\d+(\.\d+)?$/, "Invalid price format").transform(Number)),
 });
 
 interface EditTimeSlotDialogProps {
@@ -46,7 +47,7 @@ const EditTimeSlotDialog = ({ isOpen, onClose, slot, onSave }: EditTimeSlotDialo
   });
 
   // Update form when slot changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (slot) {
       form.reset({
         startTime: slot.startTime,
@@ -71,10 +72,23 @@ const EditTimeSlotDialog = ({ isOpen, onClose, slot, onSave }: EditTimeSlotDialo
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Time Slot</DialogTitle>
+          <DialogTitle className="flex items-center">
+            <Clock className="mr-2 h-5 w-5" /> 
+            Edit Time Slot
+          </DialogTitle>
         </DialogHeader>
+        
+        {slot && (
+          <div className="py-2">
+            <div className="flex items-center mb-2">
+              <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+              <span className="capitalize font-medium">{slot.day}</span>
+            </div>
+          </div>
+        )}
+        
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 py-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -83,7 +97,11 @@ const EditTimeSlotDialog = ({ isOpen, onClose, slot, onSave }: EditTimeSlotDialo
                   <FormItem>
                     <FormLabel>Start Time</FormLabel>
                     <FormControl>
-                      <Input type="time" {...field} />
+                      <Input 
+                        type="time" 
+                        {...field} 
+                        className="focus-within:ring-1 focus-within:ring-theater-accent"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -97,7 +115,11 @@ const EditTimeSlotDialog = ({ isOpen, onClose, slot, onSave }: EditTimeSlotDialo
                   <FormItem>
                     <FormLabel>End Time</FormLabel>
                     <FormControl>
-                      <Input type="time" {...field} />
+                      <Input 
+                        type="time" 
+                        {...field} 
+                        className="focus-within:ring-1 focus-within:ring-theater-accent"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -110,13 +132,17 @@ const EditTimeSlotDialog = ({ isOpen, onClose, slot, onSave }: EditTimeSlotDialo
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price ($)</FormLabel>
+                  <FormLabel className="flex items-center">
+                    <DollarSign className="h-4 w-4 mr-1" />
+                    Price
+                  </FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
                       step="0.01" 
                       {...field}
                       onChange={e => field.onChange(e.target.valueAsNumber || e.target.value)} 
+                      className="focus-within:ring-1 focus-within:ring-theater-accent"
                     />
                   </FormControl>
                   <FormMessage />
@@ -124,7 +150,7 @@ const EditTimeSlotDialog = ({ isOpen, onClose, slot, onSave }: EditTimeSlotDialo
               )}
             />
 
-            <DialogFooter className="mt-6">
+            <DialogFooter className="mt-6 gap-2">
               <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
               <Button type="submit">Save Changes</Button>
             </DialogFooter>
