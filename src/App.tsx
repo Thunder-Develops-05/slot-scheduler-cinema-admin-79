@@ -19,38 +19,18 @@ function App() {
         <Router>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route 
-              path="/" 
-              element={
-                <PrivateRoute>
-                  <Index />
-                </PrivateRoute>
-              } 
-            />
-            <Route 
-              path="/theaters" 
-              element={
-                <PrivateRoute>
-                  <Theaters />
-                </PrivateRoute>
-              } 
-            />
-            <Route 
-              path="/theaters/:theaterId/time-slots" 
-              element={
-                <PrivateRoute>
-                  <TimeSlots />
-                </PrivateRoute>
-              } 
-            />
-            <Route 
-              path="/overview" 
-              element={
-                <PrivateRoute>
-                  <Overview />
-                </PrivateRoute>
-              } 
-            />
+            <Route path="/" element={<PrivateRoute />}>
+              <Route index element={<Index />} />
+            </Route>
+            <Route path="/theaters" element={<PrivateRoute />}>
+              <Route index element={<Theaters />} />
+            </Route>
+            <Route path="/theaters/:theaterId/time-slots" element={<PrivateRoute />}>
+              <Route index element={<TimeSlots />} />
+            </Route>
+            <Route path="/overview" element={<PrivateRoute />}>
+              <Route index element={<Overview />} />
+            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>

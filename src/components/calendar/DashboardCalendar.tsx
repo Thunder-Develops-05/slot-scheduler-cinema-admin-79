@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Calendar } from '@/components/ui/calendar';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -10,6 +10,7 @@ import { CalendarDay, DayStatus, useAppContext } from '@/context/AppContext';
 import { format, isSameDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
+import { DayRenderProps } from 'react-day-picker';
 
 const DashboardCalendar = () => {
   const { calendarDays, addCalendarDay, removeCalendarDay } = useAppContext();
@@ -59,10 +60,12 @@ const DashboardCalendar = () => {
   };
 
   // Custom day renderer for the calendar
-  const renderDay = (day: Date, selectedDays: Date[] | undefined, dayProps: any) => {
+  const renderDay = (props: DayRenderProps) => {
+    const { date, mouseEventHandlers, focusEventHandlers, tabIndex, className, isOutside } = props;
+    
     // Find if this day has a status
     const dayData = calendarDays.find(d => 
-      isSameDay(new Date(d.date), day)
+      isSameDay(new Date(d.date), date)
     );
     
     const isActive = dayData?.status === 'active';
@@ -70,16 +73,18 @@ const DashboardCalendar = () => {
     
     return (
       <div
-        {...dayProps}
         className={cn(
-          dayProps.className,
+          className,
           "relative",
           isActive && "bg-green-100 text-green-900 hover:bg-green-200",
           isHoliday && "bg-red-100 text-red-900 hover:bg-red-200",
           !dayData && "text-gray-400"
         )}
+        tabIndex={tabIndex}
+        {...mouseEventHandlers}
+        {...focusEventHandlers}
       >
-        {format(day, "d")}
+        {format(date, "d")}
         {dayData && (
           <div className="absolute bottom-0 left-0 right-0 h-1">
             <div 
@@ -117,7 +122,7 @@ const DashboardCalendar = () => {
         onSelect={handleDayClick}
         className="rounded-md border p-3 pointer-events-auto"
         components={{
-          Day: (props) => renderDay(props.date, props.selected, props.dayProps)
+          Day: renderDay
         }}
       />
 
