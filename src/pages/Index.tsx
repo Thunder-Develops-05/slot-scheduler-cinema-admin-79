@@ -6,6 +6,7 @@ import { Film, Clock, DollarSign, Clapperboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
+import DashboardCalendar from '@/components/calendar/DashboardCalendar';
 
 const DashboardCard = ({ 
   title, 
@@ -70,6 +71,16 @@ const Index = () => {
             icon={Clapperboard}
           />
         </div>
+        
+        {/* Calendar Section */}
+        <Card className="col-span-2">
+          <CardHeader>
+            <CardTitle>Theater Calendar</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DashboardCalendar />
+          </CardContent>
+        </Card>
         
         <div className="grid gap-4 md:grid-cols-2">
           <Card className="col-span-2">

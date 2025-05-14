@@ -1,8 +1,15 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { Theater } from '@/types/theater';
 import { TimeSlot } from '@/types/timeSlot';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
+
+// Define types for calendar day statuses
+export type DayStatus = 'active' | 'holiday' | 'inactive';
+export interface CalendarDay {
+  date: string; // ISO string format
+  status: DayStatus;
+  note?: string;
+}
 
 interface AppContextType {
   theaters: Theater[];
@@ -15,6 +22,13 @@ interface AppContextType {
   deleteTimeSlot: (id: string) => void;
   getTheaterById: (id: string) => Theater | undefined;
   getTimeSlotsByTheaterId: (theaterId: string) => TimeSlot[];
+  
+  // Calendar related properties and methods
+  calendarDays: CalendarDay[];
+  addCalendarDay: (day: CalendarDay) => void;
+  updateCalendarDay: (day: CalendarDay) => void;
+  removeCalendarDay: (date: string) => void;
+  getDayStatus: (date: string) => DayStatus;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -22,12 +36,14 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [theaters, setTheaters] = useState<Theater[]>([]);
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
+  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
   const { toast } = useToast();
 
   // Load data from localStorage on initial render
   useEffect(() => {
     const savedTheaters = localStorage.getItem('theaters');
     const savedTimeSlots = localStorage.getItem('timeSlots');
+    const savedCalendarDays = localStorage.getItem('calendarDays');
 
     if (savedTheaters) {
       setTheaters(JSON.parse(savedTheaters));
@@ -35,6 +51,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (savedTimeSlots) {
       setTimeSlots(JSON.parse(savedTimeSlots));
+    }
+
+    if (savedCalendarDays) {
+      setCalendarDays(JSON.parse(savedCalendarDays));
     }
   }, []);
 
@@ -46,6 +66,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     localStorage.setItem('timeSlots', JSON.stringify(timeSlots));
   }, [timeSlots]);
+
+  useEffect(() => {
+    localStorage.setItem('calendarDays', JSON.stringify(calendarDays));
+  }, [calendarDays]);
 
   const addTheater = (theater: Theater) => {
     setTheaters((prev) => [...prev, theater]);
@@ -114,6 +138,41 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     return timeSlots.filter((slot) => slot.theaterId === theaterId);
   };
 
+  // Calendar related functions
+  const addCalendarDay = (day: CalendarDay) => {
+    // Check if the day already exists and remove it
+    const filteredDays = calendarDays.filter(d => d.date !== day.date);
+    
+    setCalendarDays([...filteredDays, day]);
+    toast({
+      title: "Calendar updated",
+      description: `${day.date} has been marked as ${day.status}.`,
+    });
+  };
+
+  const updateCalendarDay = (day: CalendarDay) => {
+    setCalendarDays(prev => 
+      prev.map(d => d.date === day.date ? day : d)
+    );
+    toast({
+      title: "Calendar day updated",
+      description: `${day.date} status updated to ${day.status}.`,
+    });
+  };
+
+  const removeCalendarDay = (date: string) => {
+    setCalendarDays(prev => prev.filter(d => d.date !== date));
+    toast({
+      title: "Calendar day removed",
+      description: `${date} has been reset to default.`,
+    });
+  };
+
+  const getDayStatus = (date: string): DayStatus => {
+    const day = calendarDays.find(d => d.date === date);
+    return day ? day.status : 'inactive';
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -127,6 +186,12 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         deleteTimeSlot,
         getTheaterById,
         getTimeSlotsByTheaterId,
+        // Calendar related
+        calendarDays,
+        addCalendarDay,
+        updateCalendarDay,
+        removeCalendarDay,
+        getDayStatus,
       }}
     >
       {children}

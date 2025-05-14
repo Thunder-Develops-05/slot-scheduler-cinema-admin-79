@@ -19,10 +19,38 @@ function App() {
         <Router>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/" element={<PrivateRoute><Index /></PrivateRoute>} />
-            <Route path="/theaters" element={<PrivateRoute><Theaters /></PrivateRoute>} />
-            <Route path="/theaters/:theaterId/time-slots" element={<PrivateRoute><TimeSlots /></PrivateRoute>} />
-            <Route path="/overview" element={<PrivateRoute><Overview /></PrivateRoute>} />
+            <Route 
+              path="/" 
+              element={
+                <PrivateRoute>
+                  <Index />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/theaters" 
+              element={
+                <PrivateRoute>
+                  <Theaters />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/theaters/:theaterId/time-slots" 
+              element={
+                <PrivateRoute>
+                  <TimeSlots />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/overview" 
+              element={
+                <PrivateRoute>
+                  <Overview />
+                </PrivateRoute>
+              } 
+            />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
