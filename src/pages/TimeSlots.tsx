@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -104,6 +103,10 @@ const TimeSlots = () => {
     updateTimeSlot(updatedSlot);
     setIsEditDialogOpen(false);
     setEditingSlot(null);
+    toast({
+      title: "Success",
+      description: "Time slot updated successfully.",
+    });
   };
   
   const handleDeleteClick = (slotId: string) => {
@@ -165,7 +168,7 @@ const TimeSlots = () => {
           </div>
         ) : (
           <Tabs defaultValue="all" className="w-full">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto pb-2">
               <TabsList className="mb-4 flex flex-nowrap min-w-max">
                 <TabsTrigger value="all">All Days</TabsTrigger>
                 <TabsTrigger value="weekdays">Weekdays</TabsTrigger>
@@ -178,13 +181,13 @@ const TimeSlots = () => {
               </TabsList>
             </div>
             
-            <TabsContent value="all" className="space-y-8">
+            <TabsContent value="all" className="space-y-6 mt-2">
               {dayNames.map((day) => {
                 const daySlots = groupedSlots[day] || [];
                 if (daySlots.length === 0) return null;
                 
                 return (
-                  <div key={day} className="mb-8">
+                  <div key={day} className="mb-6">
                     <h3 className="text-lg font-medium capitalize mb-4 px-1">
                       {day}
                       <span className="text-muted-foreground ml-2 text-sm font-normal">
@@ -298,7 +301,7 @@ const TimeSlots = () => {
       
       {/* Add Time Slots Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-[650px] h-[90vh] md:h-auto overflow-y-auto">
+        <DialogContent className={isMobile ? "max-w-[95vw] h-[90vh] overflow-y-auto" : "max-w-[650px] max-h-[90vh] overflow-y-auto"}>
           <DialogHeader>
             <DialogTitle>Add Time Slots for {theater.name}</DialogTitle>
           </DialogHeader>
@@ -323,16 +326,19 @@ const TimeSlots = () => {
       
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className={isMobile ? "max-w-[90vw]" : ""}>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This will delete this time slot. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground">
+          <AlertDialogFooter className={isMobile ? "flex-col space-y-2" : ""}>
+            <AlertDialogCancel className={isMobile ? "w-full mt-2" : ""}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDelete} 
+              className={`bg-destructive text-destructive-foreground ${isMobile ? "w-full" : ""}`}
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
