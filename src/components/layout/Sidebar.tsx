@@ -49,12 +49,15 @@ const Sidebar = () => {
         )}
       >
         <div className="h-full w-64 p-4 flex flex-col">
-          <div className="p-4 mb-6">
+          <div className="p-4 mb-6 flex items-center">
+            <div className="h-8 w-8 rounded-md bg-primary mr-3 flex items-center justify-center">
+              <Film className="h-5 w-5 text-white" />
+            </div>
             <h1 className="text-xl font-bold">Cinema Admin</h1>
           </div>
           
           <nav className="flex-1">
-            <ul className="space-y-2">
+            <ul className="space-y-1">
               {navItems.map((item, index) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.href;
@@ -66,7 +69,7 @@ const Sidebar = () => {
                       className={cn(
                         "flex items-center gap-3 px-4 py-3 rounded-md transition-colors",
                         isActive 
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground" 
+                          ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" 
                           : "hover:bg-sidebar-accent/50 text-sidebar-foreground/70"
                       )}
                       onClick={() => isMobile && setIsOpen(false)}
@@ -80,7 +83,7 @@ const Sidebar = () => {
             </ul>
           </nav>
           
-          <div className="mt-auto p-4 text-sm text-sidebar-foreground/70">
+          <div className="mt-auto p-4 text-sm text-sidebar-foreground/70 border-t border-sidebar-border">
             <p>© 2025 Cinema Admin</p>
           </div>
         </div>
@@ -89,7 +92,7 @@ const Sidebar = () => {
       {/* Overlay for mobile */}
       {isMobile && isOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-30"
+          className="fixed inset-0 bg-black/50 z-30 backdrop-blur-sm"
           onClick={() => setIsOpen(false)}
         />
       )}

@@ -62,7 +62,7 @@ const DashboardCalendar = () => {
 
   // Custom day renderer for the calendar
   const renderDay = (props: DayContentProps) => {
-    const { date, activeModifiers } = props;
+    const { date } = props;
     
     // Find if this day has a status
     const dayData = calendarDays.find(d => 
@@ -98,10 +98,10 @@ const DashboardCalendar = () => {
   };
 
   return (
-    <div className="border rounded-lg p-4">
+    <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Theater Calendar</h3>
-        <div className="flex items-center space-x-2">
+        <h3 className="text-lg font-semibold">Theater Availability</h3>
+        <div className="flex items-center gap-4">
           <div className="flex items-center">
             <div className="w-3 h-3 bg-green-500 rounded-full mr-1" />
             <span className="text-sm">Active</span>
@@ -113,15 +113,17 @@ const DashboardCalendar = () => {
         </div>
       </div>
       
-      <Calendar
-        mode="single"
-        selected={selectedDate}
-        onSelect={handleDayClick}
-        className="rounded-md border p-3 pointer-events-auto"
-        components={{
-          DayContent: renderDay
-        }}
-      />
+      <div className="flex justify-center">
+        <Calendar
+          mode="single"
+          selected={selectedDate}
+          onSelect={handleDayClick}
+          className="rounded-md p-3 pointer-events-auto bg-white shadow-sm border"
+          components={{
+            DayContent: renderDay
+          }}
+        />
+      </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
@@ -187,7 +189,7 @@ const DashboardCalendar = () => {
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>Save</Button>
+            <Button onClick={handleSave} className="bg-primary hover:bg-primary/90">Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

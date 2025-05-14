@@ -18,9 +18,9 @@ const Header = () => {
   const isMobile = useIsMobile();
   
   return (
-    <header className="h-16 bg-white border-b border-gray-200 px-4 md:px-6 flex items-center justify-between sticky top-0 z-10">
+    <header className="h-16 bg-white shadow-sm px-4 md:px-6 flex items-center justify-between sticky top-0 z-10">
       <div className="flex items-center">
-        <h2 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-theater-primary`}>
+        <h2 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-primary`}>
           Theater Admin
         </h2>
       </div>
@@ -28,12 +28,12 @@ const Header = () => {
       <div className="flex items-center gap-2 md:gap-4">
         {!isMobile && (
           <>
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative hover:bg-secondary">
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </Button>
             
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="hover:bg-secondary">
               <Settings className="h-5 w-5" />
             </Button>
           </>
@@ -41,11 +41,11 @@ const Header = () => {
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+            <Button variant="ghost" className="relative h-9 w-9 rounded-full hover:bg-secondary">
               <User className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             {user && (
               <DropdownMenuItem className="text-sm text-muted-foreground">
