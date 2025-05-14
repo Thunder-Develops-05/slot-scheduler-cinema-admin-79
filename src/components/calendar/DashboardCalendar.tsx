@@ -10,7 +10,8 @@ import { CalendarDay, DayStatus, useAppContext } from '@/context/AppContext';
 import { format, isSameDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
-import { DayRenderProps } from 'react-day-picker';
+// Import the correct types from react-day-picker
+import { DayContentProps } from 'react-day-picker';
 
 const DashboardCalendar = () => {
   const { calendarDays, addCalendarDay, removeCalendarDay } = useAppContext();
@@ -60,8 +61,8 @@ const DashboardCalendar = () => {
   };
 
   // Custom day renderer for the calendar
-  const renderDay = (props: DayRenderProps) => {
-    const { date, mouseEventHandlers, focusEventHandlers, tabIndex, className, isOutside } = props;
+  const renderDay = (props: DayContentProps) => {
+    const { date, activeModifiers } = props;
     
     // Find if this day has a status
     const dayData = calendarDays.find(d => 
@@ -74,15 +75,11 @@ const DashboardCalendar = () => {
     return (
       <div
         className={cn(
-          className,
-          "relative",
+          "relative h-9 w-9 p-0 font-normal aria-selected:opacity-100",
           isActive && "bg-green-100 text-green-900 hover:bg-green-200",
           isHoliday && "bg-red-100 text-red-900 hover:bg-red-200",
           !dayData && "text-gray-400"
         )}
-        tabIndex={tabIndex}
-        {...mouseEventHandlers}
-        {...focusEventHandlers}
       >
         {format(date, "d")}
         {dayData && (
@@ -122,7 +119,7 @@ const DashboardCalendar = () => {
         onSelect={handleDayClick}
         className="rounded-md border p-3 pointer-events-auto"
         components={{
-          Day: renderDay
+          DayContent: renderDay
         }}
       />
 
