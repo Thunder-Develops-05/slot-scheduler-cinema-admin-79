@@ -6,4 +6,6 @@ export interface TimeSlot {
   startTime: string; // format: "HH:MM"
   endTime: string; // format: "HH:MM"
   price: number;
+  isSpecialEvent?: boolean;
+  notes?: string;
 }

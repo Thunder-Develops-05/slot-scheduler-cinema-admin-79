@@ -19,10 +19,10 @@ function App() {
         <Router>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/" element={<PrivateRoute element={<Index />} />} />
-            <Route path="/theaters" element={<PrivateRoute element={<Theaters />} />} />
-            <Route path="/theaters/:theaterId/time-slots" element={<PrivateRoute element={<TimeSlots />} />} />
-            <Route path="/overview" element={<PrivateRoute element={<Overview />} />} />
+            <Route path="/" element={<PrivateRoute><Index /></PrivateRoute>} />
+            <Route path="/theaters" element={<PrivateRoute><Theaters /></PrivateRoute>} />
+            <Route path="/theaters/:theaterId/time-slots" element={<PrivateRoute><TimeSlots /></PrivateRoute>} />
+            <Route path="/overview" element={<PrivateRoute><Overview /></PrivateRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
