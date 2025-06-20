@@ -3,13 +3,16 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
 
-// Default admin credentials
+// Default credentials
 const DEFAULT_EMAIL = 'admin@gmail.com';
 const DEFAULT_PASSWORD = '111111';
+const USER_EMAIL = 'user@gmail.com';
+const USER_PASSWORD = '111111';
 
 interface User {
   email: string;
   isAdmin: boolean;
+  name?: string;
 }
 
 interface AuthContextType {
@@ -55,11 +58,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     // Validate credentials against default values
     if (email === DEFAULT_EMAIL && password === DEFAULT_PASSWORD) {
-      const userData = { email, isAdmin: true };
+      const userData = { email, isAdmin: true, name: 'Admin User' };
       setUser(userData);
       toast({
         title: "Login successful",
         description: "Welcome back, admin!",
+      });
+      return true;
+    } else if (email === USER_EMAIL && password === USER_PASSWORD) {
+      const userData = { email, isAdmin: false, name: 'Regular User' };
+      setUser(userData);
+      toast({
+        title: "Login successful",
+        description: "Welcome to Box Cricket Booking!",
       });
       return true;
     } else {

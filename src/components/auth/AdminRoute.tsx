@@ -3,7 +3,7 @@ import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
-const PrivateRoute = () => {
+const AdminRoute = () => {
   const { isAuthenticated, isLoading, user } = useAuth();
   
   // Show loading screen while checking authentication
@@ -20,12 +20,12 @@ const PrivateRoute = () => {
     return <Navigate to="/login" replace />;
   }
   
-  // Redirect admin users to admin area
-  if (user?.isAdmin) {
-    return <Navigate to="/admin" replace />;
+  // Redirect to user area if not admin
+  if (!user?.isAdmin) {
+    return <Navigate to="/" replace />;
   }
   
   return <Outlet />;
 };
 
-export default PrivateRoute;
+export default AdminRoute;

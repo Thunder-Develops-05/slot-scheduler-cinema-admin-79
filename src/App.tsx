@@ -12,7 +12,9 @@ import HolidayManagement from './pages/HolidayManagement';
 import Theaters from './pages/Theaters';
 import NotFound from './pages/NotFound';
 import Login from './pages/Login';
+import UserBooking from './pages/UserBooking';
 import PrivateRoute from './components/auth/PrivateRoute';
+import AdminRoute from './components/auth/AdminRoute';
 import { AppProvider } from './context/AppContext';
 import { AuthProvider } from './context/AuthContext';
 import { Toaster } from './components/ui/toaster';
@@ -24,33 +26,41 @@ function App() {
         <Router>
           <Routes>
             <Route path="/login" element={<Login />} />
+            
+            {/* User Routes */}
             <Route path="/" element={<PrivateRoute />}>
+              <Route index element={<UserBooking />} />
+            </Route>
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminRoute />}>
               <Route index element={<Index />} />
             </Route>
-            <Route path="/centers" element={<PrivateRoute />}>
+            <Route path="/admin/centers" element={<AdminRoute />}>
               <Route index element={<Centers />} />
             </Route>
-            <Route path="/centers/:centerId" element={<PrivateRoute />}>
+            <Route path="/admin/centers/:centerId" element={<AdminRoute />}>
               <Route index element={<CenterOverview />} />
             </Route>
-            <Route path="/centers/:centerId/time-slots" element={<PrivateRoute />}>
+            <Route path="/admin/centers/:centerId/time-slots" element={<AdminRoute />}>
               <Route index element={<TimeSlots />} />
             </Route>
-            <Route path="/centers/:centerId/manual-booking" element={<PrivateRoute />}>
+            <Route path="/admin/centers/:centerId/manual-booking" element={<AdminRoute />}>
               <Route index element={<ManualBooking />} />
             </Route>
-            <Route path="/overview" element={<PrivateRoute />}>
+            <Route path="/admin/overview" element={<AdminRoute />}>
               <Route index element={<Overview />} />
             </Route>
-            <Route path="/analytics" element={<PrivateRoute />}>
+            <Route path="/admin/analytics" element={<AdminRoute />}>
               <Route index element={<Analytics />} />
             </Route>
-            <Route path="/holidays" element={<PrivateRoute />}>
+            <Route path="/admin/holidays" element={<AdminRoute />}>
               <Route index element={<HolidayManagement />} />
             </Route>
-            <Route path="/theaters" element={<PrivateRoute />}>
+            <Route path="/admin/theaters" element={<AdminRoute />}>
               <Route index element={<Theaters />} />
             </Route>
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
