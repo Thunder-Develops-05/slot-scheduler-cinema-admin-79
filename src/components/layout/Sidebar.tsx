@@ -2,13 +2,16 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Target, Clock, ListTodo } from 'lucide-react';
+import { LayoutDashboard, Target, Clock, ListTodo, BarChart3, Calendar, UserPlus, Building } from 'lucide-react';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
   { icon: Target, label: 'Cricket Centers', href: '/centers' },
   { icon: Clock, label: 'Time Slots', href: '/time-slots' },
-  { icon: ListTodo, label: 'Overview', href: '/overview' }
+  { icon: ListTodo, label: 'Overview', href: '/overview' },
+  { icon: BarChart3, label: 'Analytics', href: '/analytics' },
+  { icon: Calendar, label: 'Holiday Management', href: '/holidays' },
+  { icon: Building, label: 'Theaters', href: '/theaters' }
 ];
 
 const Sidebar = () => {

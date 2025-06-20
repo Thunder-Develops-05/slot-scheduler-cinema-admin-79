@@ -1,12 +1,11 @@
-
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAppContext } from '@/context/AppContext';
-import { ArrowLeft, Clock, Users, DollarSign, Calendar, Phone, MapPin } from 'lucide-react';
+import { ArrowLeft, MapPin, Users, Clock, Calendar, UserPlus } from 'lucide-react';
 
 const CenterOverview = () => {
   const { centerId } = useParams<{ centerId: string }>();
@@ -16,6 +15,7 @@ const CenterOverview = () => {
     getTodayBookingsForCenter, 
     getPaymentHistoryForCenter 
   } = useAppContext();
+  const navigate = useNavigate();
 
   if (!centerId) {
     return <div>Center not found</div>;
@@ -70,6 +70,11 @@ const CenterOverview = () => {
           <Button asChild>
             <Link to={`/centers/${centerId}/time-slots`}>
               Manage Time Slots
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link to={`/centers/${centerId}/manual-booking`}>
+              Manual Booking
             </Link>
           </Button>
         </div>
