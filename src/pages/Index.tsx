@@ -1,131 +1,20 @@
 
 import React from 'react';
-import Layout from '@/components/layout/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Target, Clock, DollarSign, Users } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { useAppContext } from '@/context/AppContext';
-import DashboardCalendar from '@/components/calendar/DashboardCalendar';
-
-const DashboardCard = ({ 
-  title, 
-  value, 
-  icon: Icon,
-  className = "" 
-}: { 
-  title: string;
-  value: string | number;
-  icon: React.ElementType;
-  className?: string;
-}) => (
-  <Card className={`${className} card-hover`}>
-    <CardHeader className="flex flex-row items-center justify-between pb-2">
-      <CardTitle className="text-sm font-medium">{title}</CardTitle>
-      <div className="h-8 w-8 rounded-md bg-primary/10 flex items-center justify-center">
-        <Icon className="h-4 w-4 text-primary" />
-      </div>
-    </CardHeader>
-    <CardContent>
-      <div className="text-2xl font-bold">{value}</div>
-    </CardContent>
-  </Card>
-);
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
 const Index = () => {
-  const { centers, timeSlots } = useAppContext();
+  const { user, isAuthenticated } = useAuth();
   
-  // Calculate some stats
-  const totalCenters = centers.length;
-  const totalTimeSlots = timeSlots.length;
-  const totalRevenue = timeSlots.reduce((sum, slot) => sum + slot.price, 0);
-  const totalCourts = centers.reduce((sum, center) => sum + center.courts, 0);
-
-  return (
-    <Layout>
-      <div className="flex flex-col space-y-6 animate-slide-in">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-            <p className="text-muted-foreground mt-1">Welcome back to your box cricket management system</p>
-          </div>
-          <Button asChild className="bg-primary hover:bg-primary/90">
-            <Link to="/centers">Manage Centers</Link>
-          </Button>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <DashboardCard 
-            title="Total Centers" 
-            value={totalCenters} 
-            icon={Target}
-          />
-          <DashboardCard 
-            title="Total Time Slots" 
-            value={totalTimeSlots} 
-            icon={Clock}
-          />
-          <DashboardCard 
-            title="Potential Revenue" 
-            value={`₹${totalRevenue.toFixed(2)}`} 
-            icon={DollarSign}
-          />
-          <DashboardCard 
-            title="Total Courts" 
-            value={totalCourts} 
-            icon={Users}
-          />
-        </div>
-        
-        {/* Calendar Section */}
-        <Card className="col-span-2 overflow-hidden">
-          <CardHeader className="bg-secondary/40 pb-3">
-            <CardTitle>Center Calendar</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0 pt-4">
-            <DashboardCalendar />
-          </CardContent>
-        </Card>
-        
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card className="col-span-2">
-            <CardHeader className="bg-secondary/40 pb-3">
-              <CardTitle>Center Overview</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <p className="mb-4 text-muted-foreground">Manage your cricket centers and time slots efficiently with our admin dashboard.</p>
-              
-              <div className="flex flex-col space-y-2">
-                {centers.length === 0 ? (
-                  <div className="p-8 text-center bg-secondary/30 rounded-lg">
-                    <p className="text-muted-foreground">No centers added yet. Get started by adding your first cricket center.</p>
-                    <Button asChild className="mt-4">
-                      <Link to="/centers">Add Center</Link>
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {centers.slice(0, 3).map((center) => (
-                      <Card key={center.id} className="bg-secondary/30 card-hover">
-                        <CardContent className="p-4">
-                          <div className="font-medium text-lg">{center.name}</div>
-                          <div className="text-sm text-muted-foreground">{center.location}</div>
-                          <div className="text-sm mt-2 flex items-center">
-                            <Clock className="h-3 w-3 mr-1 text-primary" />
-                            {timeSlots.filter(s => s.centerId === center.id).length} time slots
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </Layout>
-  );
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  if (user?.isAdmin) {
+    return <Navigate to="/admin" replace />;
+  }
+  
+  return <Navigate to="/" replace />;
 };
 
 export default Index;

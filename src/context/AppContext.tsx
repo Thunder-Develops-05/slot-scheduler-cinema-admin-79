@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Center } from '@/types/center';
 import { TimeSlot } from '@/types/timeSlot';
@@ -10,6 +11,7 @@ export interface CalendarDay {
   date: Date;
   status: DayStatus;
   reason?: string;
+  note?: string;
 }
 
 export type DayStatus = 'available' | 'holiday' | 'blocked';
@@ -70,15 +72,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([
     // Morning slots for SportZone
-    { id: '1', centerId: '1', day: 'monday', startTime: '06:00', endTime: '07:00', price: 500, isActive: true },
-    { id: '2', centerId: '1', day: 'monday', startTime: '07:00', endTime: '08:00', price: 500, isActive: true },
-    { id: '3', centerId: '1', day: 'monday', startTime: '18:00', endTime: '19:00', price: 800, isActive: true },
-    { id: '4', centerId: '1', day: 'monday', startTime: '19:00', endTime: '20:00', price: 800, isActive: true },
+    { id: '1', centerId: '1', day: 'monday', startTime: '06:00', endTime: '07:00', price: 500, isActive: true, maxCapacity: 22 },
+    { id: '2', centerId: '1', day: 'monday', startTime: '07:00', endTime: '08:00', price: 500, isActive: true, maxCapacity: 22 },
+    { id: '3', centerId: '1', day: 'monday', startTime: '18:00', endTime: '19:00', price: 800, isActive: true, maxCapacity: 22 },
+    { id: '4', centerId: '1', day: 'monday', startTime: '19:00', endTime: '20:00', price: 800, isActive: true, maxCapacity: 22 },
     
     // Champions Ground slots
-    { id: '5', centerId: '2', day: 'monday', startTime: '06:00', endTime: '07:00', price: 600, isActive: true },
-    { id: '6', centerId: '2', day: 'monday', startTime: '18:00', endTime: '19:00', price: 900, isActive: true },
-    { id: '7', centerId: '2', day: 'monday', startTime: '19:00', endTime: '20:00', price: 900, isActive: true },
+    { id: '5', centerId: '2', day: 'monday', startTime: '06:00', endTime: '07:00', price: 600, isActive: true, maxCapacity: 30 },
+    { id: '6', centerId: '2', day: 'monday', startTime: '18:00', endTime: '19:00', price: 900, isActive: true, maxCapacity: 30 },
+    { id: '7', centerId: '2', day: 'monday', startTime: '19:00', endTime: '20:00', price: 900, isActive: true, maxCapacity: 30 },
   ]);
   
   const [theaters, setTheaters] = useState<Theater[]>([]);

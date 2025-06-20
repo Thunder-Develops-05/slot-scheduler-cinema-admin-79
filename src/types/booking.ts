@@ -5,15 +5,18 @@ export interface Booking {
   centerId: string;
   timeSlotId: string;
   date: Date;
-  status: 'confirmed' | 'pending' | 'cancelled';
+  status: 'confirmed' | 'pending' | 'cancelled' | 'completed';
   paymentStatus: 'paid' | 'pending' | 'failed';
   amount: number;
+  totalAmount: number;
   teamName?: string;
   playerCount: number;
   contactNumber: string;
+  customerPhone: string;
   specialRequests?: string;
   bookingTime: Date;
   qrCode?: string;
+  paymentMethod?: 'cash' | 'card' | 'upi' | 'wallet';
 }
 
 export interface Team {

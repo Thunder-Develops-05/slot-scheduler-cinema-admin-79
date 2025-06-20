@@ -7,4 +7,7 @@ export interface TimeSlot {
   endTime: string;
   price: number;
   isActive: boolean;
+  maxCapacity?: number;
+  isSpecialEvent?: boolean;
+  notes?: string;
 }
