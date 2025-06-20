@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAppContext } from '@/context/AppContext';
-import { ArrowLeft, MapPin, Users, Clock, Calendar, UserPlus } from 'lucide-react';
+import { ArrowLeft, MapPin, Users, Clock, Calendar, UserPlus, Phone, DollarSign } from 'lucide-react';
 
 const CenterOverview = () => {
   const { centerId } = useParams<{ centerId: string }>();
