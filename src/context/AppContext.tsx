@@ -1,14 +1,25 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Center } from '@/types/center';
 import { TimeSlot } from '@/types/timeSlot';
 import { Theater } from '@/types/theater';
+import { Booking } from '@/types/booking';
 import { toast } from '@/components/ui/use-toast';
+
+export interface CalendarDay {
+  id: string;
+  date: Date;
+  status: DayStatus;
+  reason?: string;
+}
+
+export type DayStatus = 'available' | 'holiday' | 'blocked';
 
 interface AppContextType {
   centers: Center[];
   timeSlots: TimeSlot[];
   theaters: Theater[];
+  bookings: Booking[];
+  calendarDays: CalendarDay[];
   addCenter: (center: Center) => void;
   updateCenter: (center: Center) => void;
   deleteCenter: (id: string) => void;
@@ -22,6 +33,11 @@ interface AppContextType {
   addTheater: (theater: Theater) => void;
   updateTheater: (theater: Theater) => void;
   deleteTheater: (id: string) => void;
+  addBooking: (booking: Booking) => void;
+  addCalendarDay: (day: CalendarDay) => void;
+  removeCalendarDay: (id: string) => void;
+  getDayStatus: (date: Date) => DayStatus;
+  getPaymentHistoryForCenter: (centerId: string) => any[];
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -66,6 +82,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   ]);
   
   const [theaters, setTheaters] = useState<Theater[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
 
   const addCenter = (center: Center) => {
     setCenters(prev => [...prev, center]);
@@ -151,11 +169,42 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
   };
 
+  const addBooking = (booking: Booking) => {
+    setBookings(prev => [...prev, booking]);
+    toast({
+      title: "Booking confirmed",
+      description: `Your booking for ${booking.date} has been confirmed.`,
+    });
+  };
+
+  const addCalendarDay = (day: CalendarDay) => {
+    setCalendarDays(prev => [...prev, day]);
+  };
+
+  const removeCalendarDay = (id: string) => {
+    setCalendarDays(prev => prev.filter(day => day.id !== id));
+  };
+
+  const getDayStatus = (date: Date): DayStatus => {
+    const day = calendarDays.find(d => 
+      d.date.toDateString() === date.toDateString()
+    );
+    return day?.status || 'available';
+  };
+
+  const getPaymentHistoryForCenter = (centerId: string) => {
+    // This would normally fetch payment history
+    // For now, return empty array as placeholder
+    return [];
+  };
+
   return (
     <AppContext.Provider value={{
       centers,
       timeSlots,
       theaters,
+      bookings,
+      calendarDays,
       addCenter,
       updateCenter,
       deleteCenter,
@@ -169,6 +218,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       addTheater,
       updateTheater,
       deleteTheater,
+      addBooking,
+      addCalendarDay,
+      removeCalendarDay,
+      getDayStatus,
+      getPaymentHistoryForCenter,
     }}>
       {children}
     </AppContext.Provider>
