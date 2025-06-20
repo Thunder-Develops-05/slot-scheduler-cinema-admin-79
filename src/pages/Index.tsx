@@ -2,7 +2,7 @@
 import React from 'react';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Film, Clock, DollarSign, Clapperboard } from 'lucide-react';
+import { Target, Clock, DollarSign, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
@@ -33,13 +33,13 @@ const DashboardCard = ({
 );
 
 const Index = () => {
-  const { theaters, timeSlots } = useAppContext();
+  const { centers, timeSlots } = useAppContext();
   
   // Calculate some stats
-  const totalTheaters = theaters.length;
+  const totalCenters = centers.length;
   const totalTimeSlots = timeSlots.length;
   const totalRevenue = timeSlots.reduce((sum, slot) => sum + slot.price, 0);
-  const totalScreens = theaters.reduce((sum, theater) => sum + theater.screens, 0);
+  const totalCourts = centers.reduce((sum, center) => sum + center.courts, 0);
 
   return (
     <Layout>
@@ -47,18 +47,18 @@ const Index = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-            <p className="text-muted-foreground mt-1">Welcome back to your theater management system</p>
+            <p className="text-muted-foreground mt-1">Welcome back to your box cricket management system</p>
           </div>
           <Button asChild className="bg-primary hover:bg-primary/90">
-            <Link to="/theaters">Manage Theaters</Link>
+            <Link to="/centers">Manage Centers</Link>
           </Button>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <DashboardCard 
-            title="Total Theaters" 
-            value={totalTheaters} 
-            icon={Film}
+            title="Total Centers" 
+            value={totalCenters} 
+            icon={Target}
           />
           <DashboardCard 
             title="Total Time Slots" 
@@ -67,20 +67,20 @@ const Index = () => {
           />
           <DashboardCard 
             title="Potential Revenue" 
-            value={`$${totalRevenue.toFixed(2)}`} 
+            value={`₹${totalRevenue.toFixed(2)}`} 
             icon={DollarSign}
           />
           <DashboardCard 
-            title="Total Screens" 
-            value={totalScreens} 
-            icon={Clapperboard}
+            title="Total Courts" 
+            value={totalCourts} 
+            icon={Users}
           />
         </div>
         
         {/* Calendar Section */}
         <Card className="col-span-2 overflow-hidden">
           <CardHeader className="bg-secondary/40 pb-3">
-            <CardTitle>Theater Calendar</CardTitle>
+            <CardTitle>Center Calendar</CardTitle>
           </CardHeader>
           <CardContent className="p-0 pt-4">
             <DashboardCalendar />
@@ -90,29 +90,29 @@ const Index = () => {
         <div className="grid gap-4 md:grid-cols-2">
           <Card className="col-span-2">
             <CardHeader className="bg-secondary/40 pb-3">
-              <CardTitle>Theater Overview</CardTitle>
+              <CardTitle>Center Overview</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
-              <p className="mb-4 text-muted-foreground">Manage your theaters and time slots efficiently with our admin dashboard.</p>
+              <p className="mb-4 text-muted-foreground">Manage your cricket centers and time slots efficiently with our admin dashboard.</p>
               
               <div className="flex flex-col space-y-2">
-                {theaters.length === 0 ? (
+                {centers.length === 0 ? (
                   <div className="p-8 text-center bg-secondary/30 rounded-lg">
-                    <p className="text-muted-foreground">No theaters added yet. Get started by adding your first theater.</p>
+                    <p className="text-muted-foreground">No centers added yet. Get started by adding your first cricket center.</p>
                     <Button asChild className="mt-4">
-                      <Link to="/theaters">Add Theater</Link>
+                      <Link to="/centers">Add Center</Link>
                     </Button>
                   </div>
                 ) : (
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {theaters.slice(0, 3).map((theater) => (
-                      <Card key={theater.id} className="bg-secondary/30 card-hover">
+                    {centers.slice(0, 3).map((center) => (
+                      <Card key={center.id} className="bg-secondary/30 card-hover">
                         <CardContent className="p-4">
-                          <div className="font-medium text-lg">{theater.name}</div>
-                          <div className="text-sm text-muted-foreground">{theater.location}</div>
+                          <div className="font-medium text-lg">{center.name}</div>
+                          <div className="text-sm text-muted-foreground">{center.location}</div>
                           <div className="text-sm mt-2 flex items-center">
                             <Clock className="h-3 w-3 mr-1 text-primary" />
-                            {timeSlots.filter(s => s.theaterId === theater.id).length} time slots
+                            {timeSlots.filter(s => s.centerId === center.id).length} time slots
                           </div>
                         </CardContent>
                       </Card>
