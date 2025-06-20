@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -47,12 +46,12 @@ const formSchema = z.object({
 type Day = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 
 interface TimeSlotFormProps {
-  theaterId: string;
+  centerId: string;
   onSubmit: (slots: TimeSlot[]) => void;
   onCancel: () => void;
 }
 
-const TimeSlotForm = ({ theaterId, onSubmit, onCancel }: TimeSlotFormProps) => {
+const TimeSlotForm = ({ centerId, onSubmit, onCancel }: TimeSlotFormProps) => {
   const [selectedDays, setSelectedDays] = useState<Day[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -122,7 +121,7 @@ const TimeSlotForm = ({ theaterId, onSubmit, onCancel }: TimeSlotFormProps) => {
 
     // Generate time slots for each selected day
     const allSlots = generateTimeSlots({
-      theaterId,
+      centerId,
       days: selectedDays,
       startTime: values.startTime,
       endTime: values.endTime,

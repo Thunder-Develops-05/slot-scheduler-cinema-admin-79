@@ -2,7 +2,7 @@
 import { TimeSlot } from '@/types/timeSlot';
 
 interface GenerateSlotsOptions {
-  theaterId: string;
+  centerId: string;
   days: string[];
   startTime: string;
   endTime: string;
@@ -11,7 +11,7 @@ interface GenerateSlotsOptions {
 }
 
 export const generateTimeSlots = (options: GenerateSlotsOptions): TimeSlot[] => {
-  const { theaterId, days, startTime, endTime, intervalMinutes, price } = options;
+  const { centerId, days, startTime, endTime, intervalMinutes, price } = options;
   
   const slots: TimeSlot[] = [];
   
@@ -29,7 +29,7 @@ export const generateTimeSlots = (options: GenerateSlotsOptions): TimeSlot[] => 
       
       slots.push({
         id: crypto.randomUUID(),
-        theaterId,
+        centerId,
         day: day as TimeSlot['day'],
         startTime: slotStartTime,
         endTime: slotEndTime,
