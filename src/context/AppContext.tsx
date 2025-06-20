@@ -1,272 +1,175 @@
 
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Center } from '@/types/center';
-import { TimeSlot, Booking } from '@/types/timeSlot';
-import { useToast } from '@/hooks/use-toast';
-
-// Define types for calendar day statuses
-export type DayStatus = 'active' | 'holiday' | 'inactive';
-export interface CalendarDay {
-  date: string; // ISO string format
-  status: DayStatus;
-  note?: string;
-}
+import { TimeSlot } from '@/types/timeSlot';
+import { Theater } from '@/types/theater';
+import { toast } from '@/components/ui/use-toast';
 
 interface AppContextType {
   centers: Center[];
   timeSlots: TimeSlot[];
-  bookings: Booking[];
+  theaters: Theater[];
   addCenter: (center: Center) => void;
   updateCenter: (center: Center) => void;
   deleteCenter: (id: string) => void;
-  addTimeSlots: (slots: TimeSlot[]) => void;
-  updateTimeSlot: (updatedSlot: TimeSlot) => void;
-  deleteTimeSlot: (id: string) => void;
   getCenterById: (id: string) => Center | undefined;
+  addTimeSlots: (timeSlots: TimeSlot[]) => void;
+  updateTimeSlot: (timeSlot: TimeSlot) => void;
+  deleteTimeSlot: (id: string) => void;
   getTimeSlotsByCenterId: (centerId: string) => TimeSlot[];
-  
-  // Booking related methods
-  addBooking: (booking: Booking) => void;
-  updateBooking: (booking: Booking) => void;
-  deleteBooking: (id: string) => void;
-  getBookingsByCenterId: (centerId: string) => Booking[];
-  getTodayBookingsForCenter: (centerId: string) => Booking[];
-  getPaymentHistoryForCenter: (centerId: string) => Booking[];
-  
-  // Calendar related properties and methods
-  calendarDays: CalendarDay[];
-  addCalendarDay: (day: CalendarDay) => void;
-  updateCalendarDay: (day: CalendarDay) => void;
-  removeCalendarDay: (date: string) => void;
-  getDayStatus: (date: string) => DayStatus;
+  getTimeSlotById: (id: string) => TimeSlot | undefined;
+  getTodayBookingsForCenter: (centerId: string) => any[];
+  addTheater: (theater: Theater) => void;
+  updateTheater: (theater: Theater) => void;
+  deleteTheater: (id: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const AppProvider = ({ children }: { children: React.ReactNode }) => {
-  const [centers, setCenters] = useState<Center[]>([]);
-  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
-  const { toast } = useToast();
-
-  // Load data from localStorage on initial render
-  useEffect(() => {
-    const savedCenters = localStorage.getItem('centers');
-    const savedTimeSlots = localStorage.getItem('timeSlots');
-    const savedBookings = localStorage.getItem('bookings');
-    const savedCalendarDays = localStorage.getItem('calendarDays');
-
-    if (savedCenters) {
-      setCenters(JSON.parse(savedCenters));
+export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [centers, setCenters] = useState<Center[]>([
+    {
+      id: '1',
+      name: 'SportZone Cricket Arena',
+      location: 'Sector 15, Noida',
+      courts: 2,
+      capacity: 22,
+      amenities: ['Parking', 'Washrooms', 'Cafeteria', 'Equipment Rental'],
+      description: 'Premium cricket facility with professional-grade pitches and modern amenities.',
+      isActive: true,
+      imageUrl: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3'
+    },
+    {
+      id: '2',
+      name: 'Champions Cricket Ground',
+      location: 'DLF Phase 2, Gurgaon',
+      courts: 3,
+      capacity: 30,
+      amenities: ['Parking', 'Washrooms', 'Floodlights', 'Seating Area'],
+      description: 'State-of-the-art cricket ground with excellent facilities for players and spectators.',
+      isActive: true,
+      imageUrl: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3'
     }
-
-    if (savedTimeSlots) {
-      setTimeSlots(JSON.parse(savedTimeSlots));
-    }
-
-    if (savedBookings) {
-      setBookings(JSON.parse(savedBookings));
-    }
-
-    if (savedCalendarDays) {
-      setCalendarDays(JSON.parse(savedCalendarDays));
-    }
-  }, []);
-
-  // Save data to localStorage when it changes
-  useEffect(() => {
-    localStorage.setItem('centers', JSON.stringify(centers));
-  }, [centers]);
-
-  useEffect(() => {
-    localStorage.setItem('timeSlots', JSON.stringify(timeSlots));
-  }, [timeSlots]);
-
-  useEffect(() => {
-    localStorage.setItem('bookings', JSON.stringify(bookings));
-  }, [bookings]);
-
-  useEffect(() => {
-    localStorage.setItem('calendarDays', JSON.stringify(calendarDays));
-  }, [calendarDays]);
+  ]);
+  
+  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([
+    // Morning slots for SportZone
+    { id: '1', centerId: '1', day: 'monday', startTime: '06:00', endTime: '07:00', price: 500, isActive: true },
+    { id: '2', centerId: '1', day: 'monday', startTime: '07:00', endTime: '08:00', price: 500, isActive: true },
+    { id: '3', centerId: '1', day: 'monday', startTime: '18:00', endTime: '19:00', price: 800, isActive: true },
+    { id: '4', centerId: '1', day: 'monday', startTime: '19:00', endTime: '20:00', price: 800, isActive: true },
+    
+    // Champions Ground slots
+    { id: '5', centerId: '2', day: 'monday', startTime: '06:00', endTime: '07:00', price: 600, isActive: true },
+    { id: '6', centerId: '2', day: 'monday', startTime: '18:00', endTime: '19:00', price: 900, isActive: true },
+    { id: '7', centerId: '2', day: 'monday', startTime: '19:00', endTime: '20:00', price: 900, isActive: true },
+  ]);
+  
+  const [theaters, setTheaters] = useState<Theater[]>([]);
 
   const addCenter = (center: Center) => {
-    setCenters((prev) => [...prev, center]);
+    setCenters(prev => [...prev, center]);
     toast({
-      title: "Center added",
-      description: `${center.name} has been added successfully.`,
+      title: "Center added successfully",
+      description: `${center.name} has been added to your centers.`,
     });
   };
 
-  const updateCenter = (center: Center) => {
-    setCenters((prev) => 
-      prev.map((c) => (c.id === center.id ? center : c))
-    );
+  const updateCenter = (updatedCenter: Center) => {
+    setCenters(prev => prev.map(center => 
+      center.id === updatedCenter.id ? updatedCenter : center
+    ));
     toast({
-      title: "Center updated",
-      description: `${center.name} has been updated successfully.`,
+      title: "Center updated successfully",
+      description: `${updatedCenter.name} has been updated.`,
     });
   };
 
   const deleteCenter = (id: string) => {
-    const center = centers.find(c => c.id === id);
-    setCenters((prev) => prev.filter((c) => c.id !== id));
-    
-    // Also delete any time slots and bookings associated with this center
-    setTimeSlots((prev) => prev.filter((slot) => slot.centerId !== id));
-    setBookings((prev) => prev.filter((booking) => booking.centerId !== id));
-    
-    if (center) {
-      toast({
-        title: "Center deleted",
-        description: `${center.name} has been deleted successfully.`,
-      });
-    }
-  };
-
-  const addTimeSlots = (slots: TimeSlot[]) => {
-    setTimeSlots((prev) => [...prev, ...slots]);
+    setCenters(prev => prev.filter(center => center.id !== id));
     toast({
-      title: "Time slots added",
-      description: `${slots.length} time slots have been added successfully.`,
-    });
-  };
-
-  const updateTimeSlot = (updatedSlot: TimeSlot) => {
-    setTimeSlots((prev) =>
-      prev.map((slot) => (slot.id === updatedSlot.id ? updatedSlot : slot))
-    );
-    toast({
-      title: "Time slot updated",
-      description: "Time slot has been updated successfully.",
-    });
-  };
-
-  const deleteTimeSlot = (id: string) => {
-    setTimeSlots((prev) => prev.filter((slot) => slot.id !== id));
-    // Also delete any bookings for this slot
-    setBookings((prev) => prev.filter((booking) => booking.slotId !== id));
-    toast({
-      title: "Time slot deleted",
-      description: "Time slot has been deleted successfully.",
+      title: "Center deleted",
+      description: "The center has been removed successfully.",
     });
   };
 
   const getCenterById = (id: string) => {
-    return centers.find((center) => center.id === id);
+    return centers.find(center => center.id === id);
+  };
+
+  const addTimeSlots = (newTimeSlots: TimeSlot[]) => {
+    setTimeSlots(prev => [...prev, ...newTimeSlots]);
+  };
+
+  const updateTimeSlot = (updatedTimeSlot: TimeSlot) => {
+    setTimeSlots(prev => prev.map(slot => 
+      slot.id === updatedTimeSlot.id ? updatedTimeSlot : slot
+    ));
+  };
+
+  const deleteTimeSlot = (id: string) => {
+    setTimeSlots(prev => prev.filter(slot => slot.id !== id));
   };
 
   const getTimeSlotsByCenterId = (centerId: string) => {
-    return timeSlots.filter((slot) => slot.centerId === centerId);
+    return timeSlots.filter(slot => slot.centerId === centerId);
   };
 
-  // Booking related functions
-  const addBooking = (booking: Booking) => {
-    setBookings((prev) => [...prev, booking]);
-    toast({
-      title: "Booking added",
-      description: `Booking for ${booking.customerName} has been added.`,
-    });
-  };
-
-  const updateBooking = (booking: Booking) => {
-    setBookings((prev) =>
-      prev.map((b) => (b.id === booking.id ? booking : b))
-    );
-    toast({
-      title: "Booking updated",
-      description: "Booking has been updated successfully.",
-    });
-  };
-
-  const deleteBooking = (id: string) => {
-    setBookings((prev) => prev.filter((booking) => booking.id !== id));
-    toast({
-      title: "Booking deleted",
-      description: "Booking has been deleted successfully.",
-    });
-  };
-
-  const getBookingsByCenterId = (centerId: string) => {
-    return bookings.filter((booking) => booking.centerId === centerId);
+  const getTimeSlotById = (id: string) => {
+    return timeSlots.find(slot => slot.id === id);
   };
 
   const getTodayBookingsForCenter = (centerId: string) => {
-    const today = new Date().toISOString().split('T')[0];
-    return bookings.filter((booking) => 
-      booking.centerId === centerId && booking.date.startsWith(today)
-    );
+    // This would normally fetch from a booking service
+    // For now, return empty array as placeholder
+    return [];
   };
 
-  const getPaymentHistoryForCenter = (centerId: string) => {
-    return bookings
-      .filter((booking) => booking.centerId === centerId && booking.paymentStatus === 'paid')
-      .sort((a, b) => new Date(b.bookingTime).getTime() - new Date(a.bookingTime).getTime());
-  };
-
-  // Calendar related functions
-  const addCalendarDay = (day: CalendarDay) => {
-    const filteredDays = calendarDays.filter(d => d.date !== day.date);
-    setCalendarDays([...filteredDays, day]);
+  const addTheater = (theater: Theater) => {
+    setTheaters(prev => [...prev, theater]);
     toast({
-      title: "Calendar updated",
-      description: `${day.date} has been marked as ${day.status}.`,
+      title: "Theater added successfully",
+      description: `${theater.name} has been added.`,
     });
   };
 
-  const updateCalendarDay = (day: CalendarDay) => {
-    setCalendarDays(prev => 
-      prev.map(d => d.date === day.date ? day : d)
-    );
+  const updateTheater = (updatedTheater: Theater) => {
+    setTheaters(prev => prev.map(theater => 
+      theater.id === updatedTheater.id ? updatedTheater : theater
+    ));
     toast({
-      title: "Calendar day updated",
-      description: `${day.date} status updated to ${day.status}.`,
+      title: "Theater updated successfully",
+      description: `${updatedTheater.name} has been updated.`,
     });
   };
 
-  const removeCalendarDay = (date: string) => {
-    setCalendarDays(prev => prev.filter(d => d.date !== date));
+  const deleteTheater = (id: string) => {
+    setTheaters(prev => prev.filter(theater => theater.id !== id));
     toast({
-      title: "Calendar day removed",
-      description: `${date} has been reset to default.`,
+      title: "Theater deleted",
+      description: "The theater has been removed successfully.",
     });
-  };
-
-  const getDayStatus = (date: string): DayStatus => {
-    const day = calendarDays.find(d => d.date === date);
-    return day ? day.status : 'inactive';
   };
 
   return (
-    <AppContext.Provider
-      value={{
-        centers,
-        timeSlots,
-        bookings,
-        addCenter,
-        updateCenter,
-        deleteCenter,
-        addTimeSlots,
-        updateTimeSlot,
-        deleteTimeSlot,
-        getCenterById,
-        getTimeSlotsByCenterId,
-        // Booking related
-        addBooking,
-        updateBooking,
-        deleteBooking,
-        getBookingsByCenterId,
-        getTodayBookingsForCenter,
-        getPaymentHistoryForCenter,
-        // Calendar related
-        calendarDays,
-        addCalendarDay,
-        updateCalendarDay,
-        removeCalendarDay,
-        getDayStatus,
-      }}
-    >
+    <AppContext.Provider value={{
+      centers,
+      timeSlots,
+      theaters,
+      addCenter,
+      updateCenter,
+      deleteCenter,
+      getCenterById,
+      addTimeSlots,
+      updateTimeSlot,
+      deleteTimeSlot,
+      getTimeSlotsByCenterId,
+      getTimeSlotById,
+      getTodayBookingsForCenter,
+      addTheater,
+      updateTheater,
+      deleteTheater,
+    }}>
       {children}
     </AppContext.Provider>
   );

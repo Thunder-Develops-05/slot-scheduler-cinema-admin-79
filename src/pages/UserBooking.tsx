@@ -35,7 +35,7 @@ const UserBooking = () => {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50">
       <UserHeader />
       
-      <main className="container mx-auto px-4 py-6 space-y-6">
+      <main className="container mx-auto px-4 py-6 space-y-6 pb-20">
         {/* Welcome Section */}
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
