@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -28,19 +29,17 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import TimeSlotForm from '@/components/time-slots/TimeSlotForm';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 const TimeSlots = () => {
-  const { theaterId } = useParams<{ theaterId: string }>();
+  const { centerId } = useParams<{ centerId: string }>();
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
   const { 
-    getTheaterById, 
-    getTimeSlotsByTheaterId, 
+    getCenterById, 
+    getTimeSlotsByCenterId, 
     addTimeSlots, 
     updateTimeSlot, 
     deleteTimeSlot,
-    theaters
+    centers
   } = useAppContext();
   
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -49,35 +48,35 @@ const TimeSlots = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [slotToDelete, setSlotToDelete] = useState<string | null>(null);
   
-  // Redirect to theaters page if no theater ID or invalid ID
+  // Redirect to centers page if no center ID or invalid ID
   useEffect(() => {
-    if (!theaterId) {
+    if (!centerId) {
       toast({
         title: "Error",
-        description: "No theater selected. Please choose a theater.",
+        description: "No center selected. Please choose a center.",
         variant: "destructive",
       });
-      navigate('/theaters');
+      navigate('/centers');
       return;
     }
 
-    const theater = getTheaterById(theaterId);
-    if (!theater) {
+    const center = getCenterById(centerId);
+    if (!center) {
       toast({
         title: "Error",
-        description: "Invalid theater ID. Please select a valid theater.",
+        description: "Invalid center ID. Please select a valid center.",
         variant: "destructive",
       });
-      navigate('/theaters');
+      navigate('/centers');
     }
-  }, [theaterId, getTheaterById, navigate]);
+  }, [centerId, getCenterById, navigate]);
   
-  if (!theaterId) {
+  if (!centerId) {
     return null; // Will redirect in useEffect
   }
   
-  const theater = getTheaterById(theaterId);
-  const slots = getTimeSlotsByTheaterId(theaterId);
+  const center = getCenterById(centerId);
+  const slots = getTimeSlotsByCenterId(centerId);
   const groupedSlots = groupSlotsByDay(slots);
   
   const dayNames = [
@@ -126,7 +125,7 @@ const TimeSlots = () => {
     }
   };
   
-  if (!theater) {
+  if (!center) {
     return null; // Will redirect in useEffect
   }
   
@@ -136,19 +135,19 @@ const TimeSlots = () => {
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
           <div>
             <Link 
-              to="/theaters" 
+              to="/centers" 
               className="flex items-center text-sm text-muted-foreground hover:text-foreground mb-2 transition-colors"
             >
               <ArrowLeft className="mr-1 h-4 w-4" />
-              Back to Theaters
+              Back to Centers
             </Link>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-                {theater.name}
+                {center.name}
               </h1>
               <span className="text-muted-foreground">Time Slots</span>
             </div>
-            <p className="text-muted-foreground">{theater.location} • {theater.screens} Screens • {theater.capacity} Seats</p>
+            <p className="text-muted-foreground">{center.location} • {center.courts} Courts • {center.capacity} Capacity</p>
           </div>
           
           <Button onClick={() => setIsAddDialogOpen(true)} className="w-full lg:w-auto">
@@ -161,7 +160,7 @@ const TimeSlots = () => {
           <div className="flex flex-col items-center justify-center p-8 bg-muted/30 rounded-lg border border-dashed">
             <Info className="h-10 w-10 text-muted-foreground mb-3" />
             <h3 className="text-lg font-medium mb-2">No time slots yet</h3>
-            <p className="text-muted-foreground mb-4 text-center">Time slots help you manage movie schedules and ticket pricing.</p>
+            <p className="text-muted-foreground mb-4 text-center">Time slots help you manage cricket schedules and pricing.</p>
             <Button onClick={() => setIsAddDialogOpen(true)}>
               Add Time Slots
             </Button>
@@ -299,14 +298,14 @@ const TimeSlots = () => {
         )}
       </div>
       
-      {/* Add Time Slots Dialog */}
+      {/* Add Time Slots Dialog - Made scrollable */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className={isMobile ? "max-w-[95vw] h-[90vh] overflow-y-auto" : "max-w-[650px] max-h-[90vh] overflow-y-auto"}>
+        <DialogContent className="max-w-[95vw] sm:max-w-[650px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add Time Slots for {theater.name}</DialogTitle>
+            <DialogTitle>Add Time Slots for {center.name}</DialogTitle>
           </DialogHeader>
           <TimeSlotForm
-            theaterId={theaterId}
+            centerId={centerId}
             onSubmit={handleAddTimeSlots}
             onCancel={() => setIsAddDialogOpen(false)}
           />
@@ -326,18 +325,18 @@ const TimeSlots = () => {
       
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className={isMobile ? "max-w-[90vw]" : ""}>
+        <AlertDialogContent className="max-w-[90vw] sm:max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This will delete this time slot. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className={isMobile ? "flex-col space-y-2" : ""}>
-            <AlertDialogCancel className={isMobile ? "w-full mt-2" : ""}>Cancel</AlertDialogCancel>
+          <AlertDialogFooter className="flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+            <AlertDialogCancel className="w-full sm:w-auto">Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={confirmDelete} 
-              className={`bg-destructive text-destructive-foreground ${isMobile ? "w-full" : ""}`}
+              className="w-full sm:w-auto bg-destructive text-destructive-foreground"
             >
               Delete
             </AlertDialogAction>

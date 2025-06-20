@@ -70,7 +70,7 @@ const EditTimeSlotDialog = ({ isOpen, onClose, slot, onSave }: EditTimeSlotDialo
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center">
             <Clock className="mr-2 h-5 w-5" /> 
@@ -100,7 +100,7 @@ const EditTimeSlotDialog = ({ isOpen, onClose, slot, onSave }: EditTimeSlotDialo
                       <Input 
                         type="time" 
                         {...field} 
-                        className="focus-within:ring-1 focus-within:ring-theater-accent"
+                        className="focus-within:ring-1 focus-within:ring-primary"
                       />
                     </FormControl>
                     <FormMessage />
@@ -118,7 +118,7 @@ const EditTimeSlotDialog = ({ isOpen, onClose, slot, onSave }: EditTimeSlotDialo
                       <Input 
                         type="time" 
                         {...field} 
-                        className="focus-within:ring-1 focus-within:ring-theater-accent"
+                        className="focus-within:ring-1 focus-within:ring-primary"
                       />
                     </FormControl>
                     <FormMessage />
@@ -134,7 +134,7 @@ const EditTimeSlotDialog = ({ isOpen, onClose, slot, onSave }: EditTimeSlotDialo
                 <FormItem>
                   <FormLabel className="flex items-center">
                     <DollarSign className="h-4 w-4 mr-1" />
-                    Price
+                    Price (₹)
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -142,7 +142,7 @@ const EditTimeSlotDialog = ({ isOpen, onClose, slot, onSave }: EditTimeSlotDialo
                       step="0.01" 
                       {...field}
                       onChange={e => field.onChange(e.target.valueAsNumber || e.target.value)} 
-                      className="focus-within:ring-1 focus-within:ring-theater-accent"
+                      className="focus-within:ring-1 focus-within:ring-primary"
                     />
                   </FormControl>
                   <FormMessage />
