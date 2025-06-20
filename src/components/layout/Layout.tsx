@@ -2,7 +2,6 @@
 import React from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
 interface LayoutProps {
@@ -10,17 +9,12 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const isMobile = useIsMobile();
-
   return (
-    <div className="flex h-screen bg-secondary/30">
+    <div className="flex h-screen bg-gradient-to-br from-green-50 to-emerald-50">
       <Sidebar />
-      <div className={cn(
-        "flex-1 flex flex-col overflow-hidden",
-        isMobile ? "w-full" : "ml-64" // Add margin on desktop to account for sidebar width
-      )}>
+      <div className="flex-1 flex flex-col overflow-hidden ml-64">
         <Header />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 animate-fade-in">
+        <main className="flex-1 overflow-y-auto p-6 animate-fade-in">
           {children}
         </main>
       </div>

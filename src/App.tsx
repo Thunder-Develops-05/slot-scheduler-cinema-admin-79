@@ -2,7 +2,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Index from './pages/Index';
-import Theaters from './pages/Theaters';
+import Centers from './pages/Centers';
+import CenterOverview from './pages/CenterOverview';
 import TimeSlots from './pages/TimeSlots';
 import Overview from './pages/Overview';
 import NotFound from './pages/NotFound';
@@ -22,10 +23,13 @@ function App() {
             <Route path="/" element={<PrivateRoute />}>
               <Route index element={<Index />} />
             </Route>
-            <Route path="/theaters" element={<PrivateRoute />}>
-              <Route index element={<Theaters />} />
+            <Route path="/centers" element={<PrivateRoute />}>
+              <Route index element={<Centers />} />
             </Route>
-            <Route path="/theaters/:theaterId/time-slots" element={<PrivateRoute />}>
+            <Route path="/centers/:centerId" element={<PrivateRoute />}>
+              <Route index element={<CenterOverview />} />
+            </Route>
+            <Route path="/centers/:centerId/time-slots" element={<PrivateRoute />}>
               <Route index element={<TimeSlots />} />
             </Route>
             <Route path="/overview" element={<PrivateRoute />}>
